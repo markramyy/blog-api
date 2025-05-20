@@ -1,0 +1,16 @@
+example_id                                                 | status  | run_time        |
+---------------------------------------------------------- | ------- | --------------- |
+./spec/controllers/api/v1/auth_controller_spec.rb[1:1:1:1] | passed  | 0.07969 seconds |
+./spec/controllers/api/v1/auth_controller_spec.rb[1:1:2:1] | passed  | 0.19499 seconds |
+./spec/controllers/api/v1/auth_controller_spec.rb[1:1:2:2] | passed  | 0.00713 seconds |
+./spec/controllers/api/v1/auth_controller_spec.rb[1:1:2:3] | passed  | 0.00618 seconds |
+./spec/controllers/api/v1/auth_controller_spec.rb[1:1:2:4] | passed  | 0.01374 seconds |
+./spec/controllers/api/v1/auth_controller_spec.rb[1:2:1:1] | passed  | 0.01396 seconds |
+./spec/controllers/api/v1/auth_controller_spec.rb[1:2:2:1] | passed  | 0.01524 seconds |
+./spec/controllers/api/v1/auth_controller_spec.rb[1:2:2:2] | passed  | 0.00324 seconds |
+./spec/controllers/api/v1/auth_controller_spec.rb[1:2:2:3] | passed  | 0.0041 seconds  |
+./spec/models/comment_spec.rb[1:1]                         | pending | 0 seconds       |
+./spec/models/post_spec.rb[1:1]                            | pending | 0.00001 seconds |
+./spec/models/post_tag_spec.rb[1:1]                        | pending | 0 seconds       |
+./spec/models/tag_spec.rb[1:1]                             | pending | 0 seconds       |
+./spec/models/user_spec.rb[1:1]                            | pending | 0.00006 seconds |
