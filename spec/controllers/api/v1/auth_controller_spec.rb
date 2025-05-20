@@ -72,7 +72,7 @@ RSpec.describe Api::V1::AuthController, type: :controller do
   end
 
   describe 'POST #login' do
-    let(:user) { create(:user, email: 'test@example.com', password: 'password123') }
+    let(:user) { create(:user, email: "test#{SecureRandom.hex(4)}@example.com", password: 'password123') }
 
     context 'with valid credentials' do
       it 'returns user data and token' do
