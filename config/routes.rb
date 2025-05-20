@@ -13,7 +13,9 @@ Rails.application.routes.draw do
       post 'auth/signup', to: 'auth#signup'
       post 'auth/login', to: 'auth#login'
 
-      resources :posts, only: [:index, :show, :create, :update, :destroy]
+      resources :posts, only: [:index, :show, :create, :update, :destroy] do
+        resources :comments, only: [:index, :create, :update, :destroy]
+      end
     end
   end
 end
