@@ -30,6 +30,10 @@ class Post < ApplicationRecord
     self.tags = existing_tags + new_tags
   end
 
+  def self.cleanup_old_posts
+    where('created_at < ?', 24.hours.ago).destroy_all
+  end
+
   private
 
   def has_at_least_one_tag

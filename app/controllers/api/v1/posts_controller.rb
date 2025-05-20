@@ -3,36 +3,41 @@ module Api
     class PostsController < ApplicationController
       before_action :set_post, only: [:show, :update, :destroy]
       before_action :authorize_post_owner, only: [:update, :destroy]
+      before_action :authenticate_user!
 
       def index
         @posts = Post.includes(:user, :tags).all
-        render json: @posts.as_json(
+        @posts = @posts.joins(:tags).where(tags: { id: params[:tag_id] }) if params[:tag_id]
+        render json: { posts: @posts.as_json(
           include: {
             user: { only: [:id, :name, :email, :image] },
             tags: { only: [:id, :name] }
           }
-        )
+        ) }
       end
 
       def show
-        render json: @post.as_json(
+        render json: { post: @post.as_json(
           include: {
             user: { only: [:id, :name, :email, :image] },
-            tags: { only: [:id, :name] }
+            tags: { only: [:id, :name] },
+            comments: {
+              include: { user: { only: [:id, :name, :email, :image] } }
+            }
           }
-        )
+        ) }
       end
 
       def create
         @post = current_user.posts.build(post_params)
 
         if @post.save
-          render json: @post.as_json(
+          render json: { post: @post.as_json(
             include: {
               user: { only: [:id, :name, :email, :image] },
               tags: { only: [:id, :name] }
             }
-          ), status: :created
+          ) }, status: :created
         else
           render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
         end
@@ -40,12 +45,12 @@ module Api
 
       def update
         if @post.update(post_params)
-          render json: @post.as_json(
+          render json: { post: @post.as_json(
             include: {
               user: { only: [:id, :name, :email, :image] },
               tags: { only: [:id, :name] }
             }
-          )
+          ) }
         else
           render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
         end
@@ -70,7 +75,14 @@ module Api
 
       def authorize_post_owner
         unless @post.authored_by?(current_user)
-          render json: { error: "You are not authorized to perform this action" }, status: :forbidden
+          render json: { error: "You are not authorized to perform this action" }, status: :unauthorized
+        end
+      end
+
+      def authenticate_user!
+        unless current_user
+          render json: { error: 'Unauthorized' }, status: :unauthorized
+          return
         end
       end
     end
