@@ -49,6 +49,12 @@ case "$SERVICE_ROLE" in
     wait_for_redis
     start_sidekiq
     ;;
+  "test")
+    wait_for_postgres
+    wait_for_redis
+    bundle exec rails db:test:prepare
+    bundle exec rspec
+    ;;
   *)
     echo "Unknown service role: $SERVICE_ROLE"
     exit 1

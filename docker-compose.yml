@@ -55,3 +55,20 @@ services:
       - db
       - redis
     command: ./start.sh
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/rails
+      - bundle_cache:/usr/local/bundle
+    environment:
+      - RAILS_ENV=test
+      - SERVICE_ROLE=test
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+    command: bundle exec rspec
