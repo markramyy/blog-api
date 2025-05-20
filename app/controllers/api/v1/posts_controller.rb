@@ -61,7 +61,7 @@ module Api
       def set_post
         @post = Post.find(params[:id])
       rescue ActiveRecord::RecordNotFound
-        render json: { error: 'Post not found' }, status: :not_found
+        render json: { error: "Post not found" }, status: :not_found
       end
 
       def post_params
@@ -70,7 +70,7 @@ module Api
 
       def authorize_post_owner
         unless @post.authored_by?(current_user)
-          render json: { error: 'You are not authorized to perform this action' }, status: :forbidden
+          render json: { error: "You are not authorized to perform this action" }, status: :forbidden
         end
       end
     end

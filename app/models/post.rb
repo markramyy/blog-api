@@ -34,7 +34,7 @@ class Post < ApplicationRecord
 
   def has_at_least_one_tag
     if tags.empty?
-      errors.add(:tags, 'must have at least one tag')
+      errors.add(:tags, "must have at least one tag")
     end
   end
 

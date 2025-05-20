@@ -39,13 +39,13 @@ module Api
             def set_post
                 @post = Post.find(params[:post_id])
             rescue ActiveRecord::RecordNotFound
-                render json: { error: 'Post not found' }, status: :not_found
+                render json: { error: "Post not found" }, status: :not_found
             end
 
             def set_comment
                 @comment = @post.comments.find(params[:id])
             rescue ActiveRecord::RecordNotFound
-                render json: { error: 'Comment not found' }, status: :not_found
+                render json: { error: "Comment not found" }, status: :not_found
             end
 
             def comment_params
@@ -54,7 +54,7 @@ module Api
 
             def authorize_comment_owner
                 unless @comment.authored_by?(current_user)
-                render json: { error: 'You are not authorized to perform this action' }, status: :forbidden
+                render json: { error: "You are not authorized to perform this action" }, status: :forbidden
                 end
             end
         end

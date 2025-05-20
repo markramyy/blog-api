@@ -21,7 +21,7 @@ module Api
           token = user.generate_auth_token
           render json: { user: user.as_json(except: :password_digest), token: token }
         else
-          render json: { error: 'Invalid email or password' }, status: :unauthorized
+          render json: { error: "Invalid email or password" }, status: :unauthorized
         end
       end
 
