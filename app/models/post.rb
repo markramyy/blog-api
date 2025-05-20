@@ -10,6 +10,8 @@ class Post < ApplicationRecord
 
   scope :by_user, ->(user) { where(user: user) }
 
+  after_create :schedule_deletion
+
   def authored_by?(user)
     self.user_id == user.id
   end
@@ -34,5 +36,9 @@ class Post < ApplicationRecord
     if tags.empty?
       errors.add(:tags, 'must have at least one tag')
     end
+  end
+
+  def schedule_deletion
+    PostDeletionWorker.perform_in(24.hours, id)
   end
 end
