@@ -23,10 +23,11 @@ Rails.application.routes.draw do
       post 'auth/signup', to: 'auth#signup'
       post 'auth/login', to: 'auth#login'
 
-      resources :tags, only: [:index, :create]
       resources :posts, only: [:index, :show, :create, :update, :destroy] do
+        resources :tags, only: [:destroy]
         resources :comments, only: [:index, :create, :update, :destroy]
       end
+      resources :tags, only: [:index, :create]
     end
   end
 end
