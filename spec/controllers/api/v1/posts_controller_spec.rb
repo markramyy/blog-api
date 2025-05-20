@@ -124,6 +124,25 @@ RSpec.describe Api::V1::PostsController, type: :controller do
             expect(response).to have_http_status(:ok)
             expect(json_response['posts'].length).to eq(3)
         end
+
+        it 'returns empty array for non-existent tag' do
+            get :index, params: { tag_id: 999999 }
+            expect(response).to have_http_status(:ok)
+            expect(json_response['posts']).to be_empty
+        end
+
+        it 'handles posts with multiple tags correctly' do
+            other_tag = create(:tag)
+            post_with_multiple_tags = create(:post, user: user, tags: [tag, other_tag])
+
+            get :index, params: { tag_id: tag.id }
+            expect(response).to have_http_status(:ok)
+            expect(json_response['posts'].map { |p| p['id'] }).to include(post_with_multiple_tags.id)
+
+            get :index, params: { tag_id: other_tag.id }
+            expect(response).to have_http_status(:ok)
+            expect(json_response['posts'].map { |p| p['id'] }).to include(post_with_multiple_tags.id)
+        end
     end
 
     describe 'GET #show' do
@@ -141,6 +160,13 @@ RSpec.describe Api::V1::PostsController, type: :controller do
         it 'returns not found for non-existent post' do
             get :show, params: { id: 0 }
             expect(response).to have_http_status(:not_found)
+        end
+
+        it 'handles post with no comments' do
+            post_without_comments = create(:post, user: user, tags: [tag])
+            get :show, params: { id: post_without_comments.id }
+            expect(response).to have_http_status(:ok)
+            expect(json_response['post']['comments']).to be_empty
         end
     end
 
@@ -175,6 +201,32 @@ RSpec.describe Api::V1::PostsController, type: :controller do
                 expect(response).to have_http_status(:ok)
                 expect(json_response['post']['tags'].length).to eq(2)
                 expect(json_response['post']['tags'].map { |t| t['name'] }).to include(new_tag.name, 'another_tag')
+            end
+
+            it 'handles update with empty tag list' do
+                put :update, params: { id: post.id, post: { tag_list: '' } }
+                expect(response).to have_http_status(:unprocessable_entity)
+                expect(json_response['errors']).to include("Tags must have at least one tag")
+            end
+
+            it 'handles post with no comments' do
+                post_without_comments = create(:post, user: user, tags: [tag])
+                get :show, params: { id: post_without_comments.id }
+                expect(response).to have_http_status(:ok)
+                expect(json_response['post']['comments']).to be_empty
+            end
+
+            it 'validates title length' do
+                long_title = 'a' * 256
+                put :update, params: { id: post.id, post: { title: long_title } }
+                expect(response).to have_http_status(:unprocessable_entity)
+                expect(json_response['errors']).to include("Title is too long (maximum is 255 characters)")
+            end
+
+            it 'handles update with special characters in tags' do
+                put :update, params: { id: post.id, post: { tag_list: "tag@123, tag#456" } }
+                expect(response).to have_http_status(:ok)
+                expect(json_response['post']['tags'].map { |t| t['name'] }).to include("tag@123", "tag#456")
             end
         end
 
