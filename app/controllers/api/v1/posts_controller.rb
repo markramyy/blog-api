@@ -5,19 +5,34 @@ module Api
       before_action :authorize_post_owner, only: [:update, :destroy]
 
       def index
-        @posts = Post.all
-        render json: @posts
+        @posts = Post.includes(:user, :tags).all
+        render json: @posts.as_json(
+          include: {
+            user: { only: [:id, :name, :email, :image] },
+            tags: { only: [:id, :name] }
+          }
+        )
       end
 
       def show
-        render json: @post
+        render json: @post.as_json(
+          include: {
+            user: { only: [:id, :name, :email, :image] },
+            tags: { only: [:id, :name] }
+          }
+        )
       end
 
       def create
         @post = current_user.posts.build(post_params)
 
         if @post.save
-          render json: @post, status: :created
+          render json: @post.as_json(
+            include: {
+              user: { only: [:id, :name, :email, :image] },
+              tags: { only: [:id, :name] }
+            }
+          ), status: :created
         else
           render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
         end
@@ -25,7 +40,12 @@ module Api
 
       def update
         if @post.update(post_params)
-          render json: @post
+          render json: @post.as_json(
+            include: {
+              user: { only: [:id, :name, :email, :image] },
+              tags: { only: [:id, :name] }
+            }
+          )
         else
           render json: { errors: @post.errors.full_messages }, status: :unprocessable_entity
         end
@@ -45,7 +65,7 @@ module Api
       end
 
       def post_params
-        params.require(:post).permit(:title, :body)
+        params.require(:post).permit(:title, :body, :tag_list)
       end
 
       def authorize_post_owner
