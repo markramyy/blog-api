@@ -195,6 +195,80 @@ curl -v -X GET http://localhost:3000/api/v1/posts \
   -H "Authorization: Bearer $TOKEN"
 ```
 
+## Postman Setup Guide
+
+### Authentication Workflow
+
+1. **Sign Up (if needed):**
+   - Method: `POST`
+   - URL: `http://localhost:3000/api/v1/auth/signup`
+   - Headers: `Content-Type: application/json`
+   - Body (raw JSON):
+   ```json
+   {
+     "user": {
+       "name": "Test User",
+       "email": "test@example.com",
+       "password": "password123",
+       "image": "https://example.com/avatar.jpg"
+     }
+   }
+   ```
+
+2. **Login:**
+   - Method: `POST`
+   - URL: `http://localhost:3000/api/v1/auth/login`
+   - Headers: `Content-Type: application/json`
+   - Body (raw JSON):
+   ```json
+   {
+     "email": "test@example.com",
+     "password": "password123"
+   }
+   ```
+
+3. **Copy the JWT token from the login response**
+
+4. **For authenticated requests, use one of these methods:**
+
+   **Method A - Authorization Tab (Recommended):**
+   - Go to the **Authorization** tab
+   - Type: Select "Bearer Token"
+   - Token: Paste your JWT token (without "Bearer" prefix)
+
+   **Method B - Headers Tab:**
+   - Go to the **Headers** tab
+   - Key: `Authorization`
+   - Value: `Bearer YOUR_JWT_TOKEN_HERE`
+   - **Important:** Include the space between "Bearer" and the token
+
+### Troubleshooting Unauthorized Errors
+
+If you get `401 Unauthorized` errors:
+
+1. **Verify token format:** Ensure your Authorization header is exactly:
+   ```
+   Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo1Mn0.xCNXP4Q0gTlCjtSlIooF426TOai-6l4ryl7jTpKfWRU
+   ```
+
+2. **Check for extra spaces:** Copy the token carefully without extra spaces
+
+3. **Test health check first:** Try `GET http://localhost:3000/up` (no auth required)
+
+4. **Re-login if needed:** JWT tokens don't expire in this API, but if issues persist, try logging in again
+
+5. **Check API logs:** Run `docker compose logs -f web` to see server-side errors
+
+### Environment Variables in Postman
+
+Create a Postman environment with:
+- `baseUrl`: `http://localhost:3000`
+- `token`: Your JWT token from login
+
+Then use:
+- URL: `{{baseUrl}}/api/v1/posts`
+- Authorization: Bearer Token with `{{token}}`
+
 ## Common Response Codes
 
 - 200: Success
