@@ -39,6 +39,9 @@ REDIS_URL=redis://redis:6379/1
 SIDEKIQ_USERNAME=admin
 SIDEKIQ_PASSWORD=your_secure_password
 
+# JWT
+JWT_SECRET=your_super_secret_jwt_key_here
+
 # Rails
 RAILS_ENV=development
 RAILS_MAX_THREADS=5
